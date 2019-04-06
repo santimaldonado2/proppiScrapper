@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#PyCharm
+/.idea
+
+# Proppi
+**/temp
+**.csv
+**/ids_to_search
+/results
