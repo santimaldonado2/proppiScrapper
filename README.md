@@ -18,7 +18,7 @@ cd ..
 4) Activate the virutalenv
 `source venv/proppienv/bin/activate`
 5) Install the requirments
-`pip3 intall -r requirements.txt`
+`pip3 install -r requirements.txt`
 
 ## Excecution
 You can start scrapping by executing the file `scrapper.sh`
