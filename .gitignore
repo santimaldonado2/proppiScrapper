@@ -107,7 +107,5 @@ venv.bak/
 /.idea
 
 # Proppi
-**/temp
 **.csv
 **/ids_to_search
-/results

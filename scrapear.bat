@@ -1,8 +1,8 @@
-SET PROPPI=C:\Users\smaldonado\Documents\proppi
+SET PROPPI=
 
 echo "INICIANDO SCRAPPER %PROPPI%"
 
-cmd /k "cd /d %PROPPI%\proppienv\Scripts & activate & cd /d   %PROPPI% & python scrapper.py"
+cmd /k "cd /d %PROPPI%\venv\proppienv\Scripts & activate & cd /d   %PROPPI% & python src/scrapper.py"
 
 echo "FINALIZANDO SCRAPPER"
 
