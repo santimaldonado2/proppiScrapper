@@ -1,0 +1,23 @@
+{
+	"scrap_lavoz":"True",
+	"scrap_olx":"False",
+	"requests" : {
+		"use_proxy":"False",
+		"max_attempts" : 15,
+		"sleep_time": 0.5
+	},
+	"lavoz":{
+		"from_page":1,
+		"pages": 1,
+		"result_filename": "lavoz",
+		"ids_filename":"lavoz",
+		"publisher_types": ["Particular", "Comercio"]
+	},
+	"olx":{
+		"from_page":1,
+		"pages": 1,
+		"result_filename": "olx",		
+		"ids_filename":"olx",
+		"provinces": ["cordoba", "santafe"]
+	}
+}
