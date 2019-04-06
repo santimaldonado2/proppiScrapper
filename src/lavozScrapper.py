@@ -14,7 +14,7 @@ from progressBarPrinter import print_progress_bar
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-fh = logging.FileHandler('logs\\lavozScrapper.log')
+fh = logging.FileHandler('logs/lavozScrapper.log')
 fh.setLevel(logging.INFO)
 formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
 fh.setFormatter(formatter)
@@ -31,7 +31,7 @@ class LaVozScrapper:
         self.result_filename = config["result_filename"]
         self.request_getter = request_getter
         self.path = path
-        self.ids_directory = self.path + "\\ids_to_search\\lavoz"
+        self.ids_directory = self.path + "/ids_to_search/lavoz"
         logger.info("Start with configuration: [{}]".format(config))
         print("----------------------")
         print("LA VOZ SCRAPPER CONFIGURATION:")
@@ -133,7 +133,7 @@ class LaVozScrapper:
                 })
                 houses_urls_df = pd.concat([houses_urls_df, houses_info], axis=0, sort=False).reset_index().drop(
                     columns="index")
-                houses_urls_df.to_csv(self.path + "\\temp\\temp_{}_{}.csv".format(publisher_type, self.ids_filename),
+                houses_urls_df.to_csv(self.path + "/temp/temp_{}_{}.csv".format(publisher_type, self.ids_filename),
                                       index=False,
                                       encoding="UTF-8")
                 print_progress_bar(i + 1, self.from_page + self.pages - 1, publisher_type + " ids")
@@ -141,7 +141,7 @@ class LaVozScrapper:
             if not os.path.exists(self.ids_directory):
                 os.makedirs(self.ids_directory)
 
-            houses_urls_df.to_csv(self.ids_directory + "\\" + self.ids_filename + "_" + publisher_type + "_ids.csv",
+            houses_urls_df.to_csv(self.ids_directory + "/" + self.ids_filename + "_" + publisher_type + "_ids.csv",
                                   index=False,
                                   encoding="UTF-8")
             logger.info("End scrap_ids {}".format(publisher_type))
@@ -158,7 +158,7 @@ class LaVozScrapper:
             print("Start {} houses info Scrapping".format(publisher_type))
             houses_df = pd.DataFrame()
             houses_urls_df = pd.read_csv(
-                self.ids_directory + "\\" + self.ids_filename + "_" + publisher_type + "_ids.csv")
+                self.ids_directory + "/" + self.ids_filename + "_" + publisher_type + "_ids.csv")
             houses_urls_df.drop_duplicates(subset="url", keep="first", inplace=True)
             i = 0
             total_rows = houses_urls_df.shape[0]
@@ -174,19 +174,19 @@ class LaVozScrapper:
                 houses_df = pd.concat([houses_df, house_info_df], axis=0, sort=False).reset_index().drop(
                     columns="index")
                 if i % 5 == 0:
-                    houses_df.to_csv(self.path + "\\temp\\temp_{}_{}.csv".format(self.result_filename, publisher_type),
+                    houses_df.to_csv(self.path + "/temp/temp_{}_{}.csv".format(self.result_filename, publisher_type),
                                      index=False, encoding="UTF-8")
                     houses_urls_df.to_csv(
-                        self.path + "\\temp\\temp_{}_{}_ids.csv".format(self.result_filename, publisher_type),
+                        self.path + "/temp/temp_{}_{}_ids.csv".format(self.result_filename, publisher_type),
                         index=False, encoding="UTF-8")
                 print_progress_bar(i, total_rows, publisher_type + " " + str(i))
 
-            directory = self.path + "\\results\\" + datetime.datetime.today().strftime('%Y-%m-%d')
+            directory = self.path + "/results/" + datetime.datetime.today().strftime('%Y-%m-%d')
             if not os.path.exists(directory):
                 os.makedirs(directory)
-            houses_df.to_csv(directory + "\\{}_{}.csv".format(self.result_filename, publisher_type), index=False,
+            houses_df.to_csv(directory + "/{}_{}.csv".format(self.result_filename, publisher_type), index=False,
                              encoding="UTF-8")
-            houses_urls_df.to_csv(self.ids_directory + "\\" + self.ids_filename + "_" + publisher_type + "_ids.csv",
+            houses_urls_df.to_csv(self.ids_directory + "/" + self.ids_filename + "_" + publisher_type + "_ids.csv",
                                   index=False)
             logger.info("End get_houses_info {}".format(publisher_type))
             print("")

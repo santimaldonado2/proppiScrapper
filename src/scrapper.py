@@ -14,12 +14,12 @@ from olxScrapper import OlxScrapper
 from random import randint
 
 path = os.path.dirname(os.path.realpath('__file__'))
-with open(path + "\\config.json") as data_file:
+with open(path + "/config.json") as data_file:
     config = json.load(data_file)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-fh = logging.FileHandler('logs\\scrapper.log')
+fh = logging.FileHandler('logs/scrapper.log')
 fh.setLevel(logging.INFO)
 formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
 fh.setFormatter(formatter)

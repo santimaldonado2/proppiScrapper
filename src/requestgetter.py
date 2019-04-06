@@ -5,7 +5,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-fh = logging.FileHandler('logs\\requestgetter.log')
+fh = logging.FileHandler('logs/requestgetter.log')
 fh.setLevel(logging.INFO)
 formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
 fh.setFormatter(formatter)

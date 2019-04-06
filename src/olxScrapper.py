@@ -16,7 +16,7 @@ from progressBarPrinter import print_progress_bar
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-fh = logging.FileHandler('logs\\olxScrapper.log')
+fh = logging.FileHandler('logs/olxScrapper.log')
 fh.setLevel(logging.INFO)
 formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
 fh.setFormatter(formatter)
@@ -32,7 +32,7 @@ class OlxScrapper:
         self.result_filename = config["result_filename"]
         self.request_getter = request_getter
         self.path = path
-        self.ids_directory = self.path + "\\ids_to_search\\olx"
+        self.ids_directory = self.path + "/ids_to_search/olx"
         logger.info("Start with configuration: [{}]".format(config))
         print("----------------------")
         print("OLX SCRAPPER CONFIGURATION:")
@@ -136,14 +136,14 @@ class OlxScrapper:
                 house_ids_df = pd.DataFrame({
                     'id': ids_list,
                     'processed': [False for id in ids_list]})
-                house_ids_df.to_csv(self.path + "\\temp\\temp_{}_{}.csv".format(province, self.ids_filename),
+                house_ids_df.to_csv(self.path + "/temp/temp_{}_{}.csv".format(province, self.ids_filename),
                                     index=False,
                                     encoding="UTF-8")
                 print_progress_bar(i + 1, self.from_page + self.pages - 1, province + " ids")
             if not os.path.exists(self.ids_directory):
                 os.makedirs(self.ids_directory)
 
-            house_ids_df.to_csv(self.ids_directory + "\\" + self.ids_filename + "_" + province + "_ids.csv",
+            house_ids_df.to_csv(self.ids_directory + "/" + self.ids_filename + "_" + province + "_ids.csv",
                                 index=False,
                                 encoding="UTF-8")
             logger.info("End scrap_ids {}".format(province))
@@ -159,7 +159,7 @@ class OlxScrapper:
             logger.info("Start get_houses_info {}".format(province))
             print("Start {} houses info Scrapping".format(province))
             houses_ids_df = pd.read_csv(
-                self.ids_directory + "\\" + self.ids_filename + "_" + province + "_ids.csv")
+                self.ids_directory + "/" + self.ids_filename + "_" + province + "_ids.csv")
             houses_ids_df.drop_duplicates(subset="id", keep="first", inplace=True)
 
             to_proceess = houses_ids_df[~houses_ids_df.processed]
@@ -179,19 +179,19 @@ class OlxScrapper:
                     columns="index")
                 houses_ids_df.loc[row.Index, 'processed'] = True
                 if i % 5 == 0:
-                    houses_df.to_csv(self.path + "\\temp\\temp_{}_{}.csv".format(self.result_filename, province),
+                    houses_df.to_csv(self.path + "/temp/temp_{}_{}.csv".format(self.result_filename, province),
                                      index=False, encoding="UTF-8")
                     houses_ids_df.to_csv(
-                        self.path + "\\temp\\temp_{}_{}_ids.csv".format(self.result_filename, province),
+                        self.path + "/temp/temp_{}_{}_ids.csv".format(self.result_filename, province),
                         index=False, encoding="UTF-8")
                 print_progress_bar(i, total_rows, province + " " + str(i))
 
-            directory = self.path + "\\results\\" + datetime.datetime.today().strftime('%Y-%m-%d')
+            directory = self.path + "/results/" + datetime.datetime.today().strftime('%Y-%m-%d')
             if not os.path.exists(directory):
                 os.makedirs(directory)
-            houses_df.to_csv(directory + "\\{}_{}.csv".format(self.result_filename, province), index=False,
+            houses_df.to_csv(directory + "/{}_{}.csv".format(self.result_filename, province), index=False,
                              encoding="UTF-8")
-            houses_ids_df.to_csv(self.ids_directory + "\\" + self.ids_filename + "_" + province + "_ids.csv",
+            houses_ids_df.to_csv(self.ids_directory + "/" + self.ids_filename + "_" + province + "_ids.csv",
                                  index=False)
             logger.info("End get_houses_info {}".format(province))
             print("")
