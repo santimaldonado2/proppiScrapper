@@ -47,6 +47,7 @@ proppiScrapper
 ```
 4) Activate the vritualenv
 `source venv/proppienv/bin/activate`
+
 5) Install the requirements
 `pip3 install -r requirements.txt`
 
@@ -60,6 +61,7 @@ python3 src/scrapper.py
 ``` 
 
 ## Configuration
+<<<<<<< HEAD
 If you want to configure better the scrapper you should take a look in the config.json file.
 
 ### Main Configuration
