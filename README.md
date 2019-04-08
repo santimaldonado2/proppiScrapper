@@ -51,6 +51,13 @@ proppiScrapper
 5) Install the requirements
 `pip3 install -r requirements.txt`
 
+### Windows
+In order to execute the bat file for windows, you should follow the same steps aforementioned but taking care about the activation of the virtualenv is inside Scripts folder.
+`venv/proppienv/Scripts/activate`
+
+Also you must add the Environment Variable "PROPPI" with the "proppiScrapper" path.
+
+
 ## Execution
 There are two options:
 a) You can start scrapping by executing the file `scrapper.sh` or `scrapper.bat`
@@ -61,7 +68,6 @@ python3 src/scrapper.py
 ``` 
 
 ## Configuration
-<<<<<<< HEAD
 If you want to configure better the scrapper you should take a look in the config.json file.
 
 ### Main Configuration
