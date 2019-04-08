@@ -1,4 +1,4 @@
-SET PROPPI=
+SET PROPPI=C:\Users\smaldonado\Documents\Proppi\proppi
 
 echo "INICIANDO SCRAPPER %PROPPI%"
 
