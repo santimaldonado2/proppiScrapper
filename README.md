@@ -12,10 +12,10 @@ This is a web scrapper that downloads houses' information available on the inter
 ```
 proppiScrapper
 │   README.md
-│	config.json
-|   requirements.txt
-|   scrapper.bat
-|   scrapper.sh
+│   config.json
+│   requirements.txt
+│   scrapper.bat
+│   scrapper.sh
 └───logs
 └───results
 └───temp
@@ -34,15 +34,15 @@ So finally, you should have
 ```
 proppiScrapper
 │   README.md
-│	config.json
-|   requirements.txt
-|   scrapper.bat
-|   scrapper.sh
+│   config.json
+│   requirements.txt
+│   scrapper.bat
+│   scrapper.sh
 └───logs
 └───results
 └───temp
 └───venv
-	└───proppienv
+    └───proppienv
 └───src
 ```
 4) Activate the vritualenv
