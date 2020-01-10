@@ -126,8 +126,8 @@ class LaVozScrapper:
                                                                                                             search_url_inmu))
                     continue
 
-                house_items = house_list[0].find_all("div", {"class": "text-decoration-none"})
-                house_urls = [house_list.div.div.a.get('href') for idx, house_item in enumerate(house_items)]
+                ##house_items = house_list[0].find_all("div", {"class": "text-decoration-none"})
+                house_urls = list(set(house_item.get("href") for house_item in house_list))
 
                 house_processed = [False for house in house_urls]
                 houses_info = pd.DataFrame({
