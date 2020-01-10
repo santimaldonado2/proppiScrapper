@@ -11,7 +11,10 @@
 		"pages": 2,
 		"result_filename": "lavoz",
 		"ids_filename":"lavoz",
-		"publisher_types": ["Particular", "Comercio"]
+		"publisher_types": [
+			"particular",
+			"inmobiliaria"
+		]
 	},
 	"olx":{
 		"from_page":1,

@@ -104,28 +104,31 @@ class LaVozScrapper:
             print("Start {} id scrapping".format(publisher_type))
             houses_urls_df = pd.DataFrame()
             print_progress_bar(0, self.from_page + self.pages - 1, publisher_type + " ids")
-            for i in range(self.from_page - 1, self.from_page + self.pages - 1):
-                page_part = "page=" + str(i) + "&"
+            for i in range(self.from_page, self.from_page + self.pages - 1):
+                page_part = "&page=" + str(i)
 
                 if i == 0:
                     page_part = ""
 
-                search_url_inmu = "https://clasificados.lavoz.com.ar/search/apachesolr_search?" + page_part + "f[0]=im_taxonomy_vid_34%3A6330&f[1]=ss_rol%3A" + publisher_type
+                ##https://clasificados.lavoz.com.ar/buscar/inmuebles?filters%5Bvendedor%5D%5B0%5D=particular&page=1
+                search_url_inmu = "https://clasificados.lavoz.com.ar/buscar/inmuebles?filters%5Bvendedor%5D%5B0%5D=" + publisher_type + page_part
                 response_soup = self.get(search_url_inmu)
                 if not response_soup:
                     logger.info("Error trying to get this page: number[{}] publisher_type[{}] url[{}]".format(i + 1,
                                                                                                               publisher_type,
                                                                                                               search_url_inmu))
                     continue
-                house_list = response_soup.find_all("div", {"class": "search-results"})
+                house_list = response_soup.find_all("a", {"class": "text-decoration-none"})
                 if (not house_list) or len(house_list) <= 0:
                     logger.info(
                         "Error trying to get the houses list: number[{}] publisher_type[{}] url[{}]".format(i + 1,
                                                                                                             publisher_type,
                                                                                                             search_url_inmu))
                     continue
-                house_items = house_list[0].find_all("div", {"class": "BoxResultado"})
-                house_urls = [house_item.div.div.a.get('href') for idx, house_item in enumerate(house_items)]
+
+                house_items = house_list[0].find_all("div", {"class": "text-decoration-none"})
+                house_urls = [house_list.div.div.a.get('href') for idx, house_item in enumerate(house_items)]
+
                 house_processed = [False for house in house_urls]
                 houses_info = pd.DataFrame({
                     "url": house_urls,
