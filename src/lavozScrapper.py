@@ -52,6 +52,8 @@ class LaVozScrapper:
         info = {}
         if response_house:
 
+            # metas = response_house.find_all("meta") es para ver los metadatos
+
             # Get general info
             for meta in response_house.find_all("meta"):
                 name = meta.get("name")
@@ -70,6 +72,8 @@ class LaVozScrapper:
                 p = re.compile(r'/\d+/')
                 art_id = p.search(link).group(0)[1:-1]
 
+            # microservico - DELETE
+            '''
             get_contact_url = "https://clasificados.lavoz.com.ar/ajax/carga-formulario_contacto/"
             get_contact_url = get_contact_url + art_id
 
@@ -85,6 +89,10 @@ class LaVozScrapper:
                 info['email'] = email.get_text().strip() if email is not None else ""
 
                 info['contact_url'] = get_contact_url
+            '''
+
+            tag_telefono = response_house.find(id="tel")
+            info['telephone'] = tag_telefono.get_text() if tag_telefono else ""
 
             for script in response_house.find_all("script", {"type": "text/javascript"}):
                 if script.get("src") is None:

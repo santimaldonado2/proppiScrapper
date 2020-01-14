@@ -1,6 +1,6 @@
 {
 	"scrap_lavoz":"True",
-	"scrap_olx":"True",
+  "scrap_olx": "False",
 	"requests" : {
 		"use_proxy":"False",
 		"max_attempts" : 5,
