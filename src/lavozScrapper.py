@@ -97,8 +97,8 @@ class LaVozScrapper:
                 if i == 0:
                     page_part = ""
 
-                search_url_inmu = 'https://clasificados.lavoz.com.ar/buscar/inmuebles?filters={{"vendedor":{publisher_types}}}{page_part}'.format(
-                    publisher_types=publisher_type, page_part=page_part).replace("\'", '"')
+                search_url_inmu = 'https://clasificados.lavoz.com.ar/buscar/inmuebles?filters={{"vendedor":["{publisher_type}"]}}{page_part}'.format(
+                    publisher_type=publisher_type, page_part=page_part).replace("\'", '"')
                 response_soup = self.get(search_url_inmu)
                 if not response_soup:
                     logger.info("Error trying to get this page: number[{}] publisher_type[{}] url[{}]".format(i + 1,
