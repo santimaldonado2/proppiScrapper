@@ -70,21 +70,8 @@ class LaVozScrapper:
                 p = re.compile(r'/\d+/')
                 art_id = p.search(link).group(0)[1:-1]
 
-            get_contact_url = "https://clasificados.lavoz.com.ar/ajax/carga-formulario_contacto/"
-            get_contact_url = get_contact_url + art_id
-
-            contact_content = self.get(get_contact_url)
-            if contact_content:
-                name = contact_content.find("h3", {"itemprop": "name"})
-                info['name'] = name.get_text().strip() if name is not None else ""
-
-                telephone = contact_content.find("span", {"itemprop": "telephone"})
-                info['telephone'] = telephone.get_text().strip() if telephone is not None else ""
-
-                email = contact_content.find("strong", {"itemprop": "email"})
-                info['email'] = email.get_text().strip() if email is not None else ""
-
-                info['contact_url'] = get_contact_url
+            tag_telefono = response_house.find(id="tel")
+            info['telephone'] = tag_telefono.get_text() if tag_telefono else ""
 
             for script in response_house.find_all("script", {"type": "text/javascript"}):
                 if script.get("src") is None:
@@ -104,28 +91,30 @@ class LaVozScrapper:
             print("Start {} id scrapping".format(publisher_type))
             houses_urls_df = pd.DataFrame()
             print_progress_bar(0, self.from_page + self.pages - 1, publisher_type + " ids")
-            for i in range(self.from_page - 1, self.from_page + self.pages - 1):
-                page_part = "page=" + str(i) + "&"
+            for i in range(self.from_page, self.from_page + self.pages - 1):
+                page_part = "&page=" + str(i)
 
                 if i == 0:
                     page_part = ""
 
-                search_url_inmu = "https://clasificados.lavoz.com.ar/search/apachesolr_search?" + page_part + "f[0]=im_taxonomy_vid_34%3A6330&f[1]=ss_rol%3A" + publisher_type
+                search_url_inmu = 'https://clasificados.lavoz.com.ar/buscar/inmuebles?filters={{"vendedor":["{publisher_type}"]}}{page_part}'.format(
+                    publisher_type=publisher_type, page_part=page_part).replace("\'", '"')
                 response_soup = self.get(search_url_inmu)
                 if not response_soup:
                     logger.info("Error trying to get this page: number[{}] publisher_type[{}] url[{}]".format(i + 1,
                                                                                                               publisher_type,
                                                                                                               search_url_inmu))
                     continue
-                house_list = response_soup.find_all("div", {"class": "search-results"})
+                house_list = response_soup.find_all("a", {"class": "text-decoration-none"})
                 if (not house_list) or len(house_list) <= 0:
                     logger.info(
                         "Error trying to get the houses list: number[{}] publisher_type[{}] url[{}]".format(i + 1,
                                                                                                             publisher_type,
                                                                                                             search_url_inmu))
                     continue
-                house_items = house_list[0].find_all("div", {"class": "BoxResultado"})
-                house_urls = [house_item.div.div.a.get('href') for idx, house_item in enumerate(house_items)]
+
+                house_urls = list(set(house_item.get("href") for house_item in house_list))
+
                 house_processed = [False for house in house_urls]
                 houses_info = pd.DataFrame({
                     "url": house_urls,
