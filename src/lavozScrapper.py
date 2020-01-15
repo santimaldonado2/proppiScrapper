@@ -52,8 +52,6 @@ class LaVozScrapper:
         info = {}
         if response_house:
 
-            # metas = response_house.find_all("meta") es para ver los metadatos
-
             # Get general info
             for meta in response_house.find_all("meta"):
                 name = meta.get("name")
@@ -71,25 +69,6 @@ class LaVozScrapper:
             else:
                 p = re.compile(r'/\d+/')
                 art_id = p.search(link).group(0)[1:-1]
-
-            # microservico - DELETE
-            '''
-            get_contact_url = "https://clasificados.lavoz.com.ar/ajax/carga-formulario_contacto/"
-            get_contact_url = get_contact_url + art_id
-
-            contact_content = self.get(get_contact_url)
-            if contact_content:
-                name = contact_content.find("h3", {"itemprop": "name"})
-                info['name'] = name.get_text().strip() if name is not None else ""
-
-                telephone = contact_content.find("span", {"itemprop": "telephone"})
-                info['telephone'] = telephone.get_text().strip() if telephone is not None else ""
-
-                email = contact_content.find("strong", {"itemprop": "email"})
-                info['email'] = email.get_text().strip() if email is not None else ""
-
-                info['contact_url'] = get_contact_url
-            '''
 
             tag_telefono = response_house.find(id="tel")
             info['telephone'] = tag_telefono.get_text() if tag_telefono else ""
@@ -118,8 +97,8 @@ class LaVozScrapper:
                 if i == 0:
                     page_part = ""
 
-                ##https://clasificados.lavoz.com.ar/buscar/inmuebles?filters%5Bvendedor%5D%5B0%5D=particular&page=1
-                search_url_inmu = "https://clasificados.lavoz.com.ar/buscar/inmuebles?filters%5Bvendedor%5D%5B0%5D=" + publisher_type + page_part
+                search_url_inmu = 'https://clasificados.lavoz.com.ar/buscar/inmuebles?filters={{"vendedor":{publisher_types}}}{page_part}'.format(
+                    publisher_types=publisher_type, page_part=page_part).replace("\'", '"')
                 response_soup = self.get(search_url_inmu)
                 if not response_soup:
                     logger.info("Error trying to get this page: number[{}] publisher_type[{}] url[{}]".format(i + 1,
@@ -134,7 +113,6 @@ class LaVozScrapper:
                                                                                                             search_url_inmu))
                     continue
 
-                ##house_items = house_list[0].find_all("div", {"class": "text-decoration-none"})
                 house_urls = list(set(house_item.get("href") for house_item in house_list))
 
                 house_processed = [False for house in house_urls]
