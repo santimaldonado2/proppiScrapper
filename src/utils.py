@@ -1,18 +1,20 @@
 import re
 
 
-def get_formated(telephone):
+def get_formated_telephone(telephone):
     if not telephone:
         return ""
 
-    telephone = re.sub('[^1-9/]', '', telephone)
+    telephone = re.sub('[^0-9/]', '', telephone)
 
-    if telephone[0:1] == '0':
+    if telephone.startswith('0'):
         telephone = telephone[1:]
 
     if telephone.startswith("35115"):
         telephone = "351" + telephone[5:]
+    elif telephone.startswith("15"):
+        telephone = "351" + telephone[2:]
 
-    telephone = telephone.split("/")
+    telephones = telephone.split("/")
 
-    return telephone[0]
+    return telephones[0]
