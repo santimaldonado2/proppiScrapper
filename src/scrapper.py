@@ -60,4 +60,3 @@ logger.info("-----End Proppi Scrapper----")
 print("-----End Proppi Scrapper Succsesfully----")
 print("I hope you have a really nice day, and remember:")
 print(phrases[randint(0, len(phrases) - 1)])
-
