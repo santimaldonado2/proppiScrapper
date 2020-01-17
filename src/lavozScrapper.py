@@ -11,6 +11,7 @@ import os
 import logging
 import re
 from progressBarPrinter import print_progress_bar
+from utils import get_formated_telephone
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -72,14 +73,8 @@ class LaVozScrapper:
 
             tag_telefono = response_house.find(id="tel")
             info['telephone'] = tag_telefono.get_text() if tag_telefono else ""
+            info['telephone_formated'] = get_formated_telephone(info['telephone'])
 
-            for script in response_house.find_all("script", {"type": "text/javascript"}):
-                if script.get("src") is None:
-                    text = script.get_text()
-                    if text is not None and "Gmap" in text:
-                        info['latitude'] = text.split("Clasificados.GmapSetingsLatitude = ")[1].split(";")[0]
-                        info['longitude'] = text.split("Clasificados.GmapSetingsLongitude = ")[1].split(";")[0]
-                        break
         logger.info("End get_house_info")
         return info
 

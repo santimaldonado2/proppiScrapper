@@ -8,12 +8,11 @@
 	},
 	"lavoz":{
 		"from_page":1,
-		"pages": 2,
+		"pages": 210,
 		"result_filename": "lavoz",
 		"ids_filename":"lavoz",
 		"publisher_types": [
-			"particular",
-			"inmobiliaria"
+			"particular"
 		]
 	},
 	"olx":{
