@@ -90,3 +90,7 @@ class RequestGetter:
 
     def get(self, url):
         return self.get_with_proxy(url) if self.use_proxy else self.get_without_proxy(url)
+
+    def post(self, url, data):
+        return requests.post(url, data)
+        # data = 'id aviso' 'page' ficha siempre igual que foto

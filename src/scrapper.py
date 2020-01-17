@@ -10,6 +10,7 @@ import json
 import logging
 from requestgetter import RequestGetter
 from lavozScrapper import LaVozScrapper
+from zonapropScrapper import ZonapropScrapper
 from olxScrapper import OlxScrapper
 from random import randint
 
@@ -30,6 +31,7 @@ print("-----Start Proppi Scrapper----")
 
 scrap_lavoz = config['scrap_lavoz'].lower() == "true"
 scrap_olx = config['scrap_olx'].lower() == "true"
+scrap_zonaprop = config['scrap_zonaprop'].lower() == "true"
 request_getter = RequestGetter(config['requests'])
 
 if scrap_lavoz:
@@ -41,6 +43,10 @@ if scrap_olx:
     olx_scrapper = OlxScrapper(config["olx"], request_getter, path)
     olx_scrapper.scrap_ids()
     olx_scrapper.get_houses_info()
+
+if scrap_zonaprop:
+    zonaprop_scrapper = ZonapropScrapper(config["zonaprop"], request_getter, path)
+    zonaprop_scrapper.scrap()
 
 phrases = ["The best way to predict the future is to create it.",
            "Live as if you were to die tomorrow.Learn as if you were to live forever.",
