@@ -88,9 +88,58 @@ class RequestGetter:
         logger.info("get_with_proxy max attempts reached, trying without proxy")
         return self.get_without_proxy(url)
 
-    def get(self, url):
-        return self.get_with_proxy(url) if self.use_proxy else self.get_without_proxy(url)
+    def get(self, url, skip_proxy=False):
+        return self.get_with_proxy(url) if self.use_proxy and not skip_proxy else self.get_without_proxy(url)
 
-    def post(self, url, data):
-        return requests.post(url, data)
-        # data = 'id aviso' 'page' ficha siempre igual que foto
+    def post(self, url, data, headers=None):
+        return self.post_with_proxy(url, data, headers) if self.use_proxy else self.post_without_proxy(url, data,
+                                                                                                       headers)
+
+    def post_without_proxy(self, url, data, headers=None):
+        logger.info("Start post_without_proxy")
+        response = None
+        try:
+            response = requests.post(url,
+                                     data=data,
+                                     headers=headers,
+                                     timeout=10)
+            sleep(self.sleep_time)
+            logger.info(
+                "End post_without_proxy, response[{response}], url:[{url}],"
+                "data:[{data}], headers:[{headers}]".format(response=response,
+                                                            url=url,
+                                                            data=data,
+                                                            headers=headers))
+        except Exception as e:
+            logger.error("This url has not been processed: {} | Exception: {}".format(url, e))
+
+        return response
+
+    def post_with_proxy(self, url, data, headers=None):
+        logger.info("Start post_with_proxy url:[{}]".format(url))
+        attempts = 0
+        while attempts < self.max_attempts:
+            try:
+                self.update_current_proxy()
+                response = requests.post(url,
+                                         data=data,
+                                         headers=headers,
+                                         proxies={"http": self.current_proxy, "https": self.current_proxy},
+                                         timeout=10)
+                logger.info(
+                    "End post_with_proxy proxy:[{proxy}], response[{response}], url:[{url}]," 
+                    "data:[{data}], headers:[{headers}]".format(proxy=self.current_proxy,
+                                                                response=response,
+                                                                url=url,
+                                                                data=data,
+                                                                headers=headers))
+                if not response.ok:
+                    raise Exception("Not 200 Exception")
+                return response
+            except Exception as e:
+                attempts += 1
+                logger.info(
+                    "Error post_with_proxy number:[{}], proxy:[{}],url:[{}]".format(attempts, self.current_proxy, url))
+                self.delete_current_proxy()
+        logger.info("post_with_proxy max attempts reached, trying without proxy")
+        return self.post_without_proxy(url, data, headers)

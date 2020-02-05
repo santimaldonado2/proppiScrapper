@@ -3,7 +3,7 @@
   "scrap_olx": "False",
   "scrap_zonaprop": "True",
   "requests": {
-    "use_proxy": "False",
+    "use_proxy": "True",
     "max_attempts": 5,
     "sleep_time": 0.5
   },
@@ -17,8 +17,8 @@
     ]
   },
   "zonaprop": {
-    "from_page": 1,
-    "pages": 2,
+    "from_page": 2,
+    "pages": 1,
     "result_filename": "zonaprop",
     "ids_filename": "zonaprop",
     "publisher_types": [

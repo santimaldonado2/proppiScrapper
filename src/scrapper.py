@@ -32,6 +32,9 @@ print("-----Start Proppi Scrapper----")
 scrap_lavoz = config['scrap_lavoz'].lower() == "true"
 scrap_olx = config['scrap_olx'].lower() == "true"
 scrap_zonaprop = config['scrap_zonaprop'].lower() == "true"
+
+config["zonaprop"]["sleep"] = config['requests']['use_proxy'] == "False"
+
 request_getter = RequestGetter(config['requests'])
 
 if scrap_lavoz:
