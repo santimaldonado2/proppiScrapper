@@ -207,7 +207,6 @@ class ZonapropScrapper:
                                                       contact_info["contenido"]["resultadoContacto"]['response'][
                                                           'clave']
         logger.info("Start process_contact_info")
-        print(processed_contact_info)
         return processed_contact_info
 
     def get_contact_info(self, house_info):
