@@ -48,6 +48,7 @@ if scrap_olx:
 if scrap_meli:
     meli_scrapper = MeliScrapper(config["meli"], request_getter, path)
     meli_scrapper.scrap_ids()
+    meli_scrapper.houses_id_info()
 
 phrases = ["The best way to predict the future is to create it.",
            "Live as if you were to die tomorrow.Learn as if you were to live forever.",
