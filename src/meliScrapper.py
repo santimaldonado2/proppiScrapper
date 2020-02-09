@@ -4,6 +4,8 @@ import pandas as pd
 import os
 import logging
 import re
+from bs4 import Tag
+
 from progressBarPrinter import print_progress_bar
 
 
@@ -80,26 +82,70 @@ class MeliScrapper:
         info = {}
         if response_house:
             short_description = response_house.find("section", {"class": "short-description--static"})
-            info['description'] = short_description.find("h1").contents[0]
+            info['shortDescription'] = short_description.find("h1").contents[0]
             info['currency'] = short_description.find("span").contents[1].contents[0]
             info['price'] = short_description.find("span").contents[3].contents[0]
             info['size'] = short_description.find_all("dl")[1].contents[2].contents[0]
             info['rooms'] = short_description.find_all("dl")[2].contents[2].contents[0]
-            info['bathrooms'] = short_description.find_all("dl")[3].contents[2].contents[0]
+
+            if list(short_description.find_all("dl")[3].contents[2].contents[0]).__len__() > 0:
+                info['bathrooms'] = short_description.find_all("dl")[3].contents[2].contents[0]
 
             section_view_more = response_house.find("section", {"class": "vip-section-seller-info"})
             info['name'] = section_view_more.contents[5].contents[1].contents[0]
 
             info['phone1'] = section_view_more.find_all("span", {"class": "profile-info-phone-value"})[0].contents[0]
-            info['phone2'] = section_view_more.find_all("span", {"class": "profile-info-phone-value"})[1].contents[0]
+            if list(section_view_more.find_all("span", {"class": "profile-info-phone-value"})).__len__() == 2:
+                info['phone2'] = section_view_more.find_all("span", {"class": "profile-info-phone-value"})[1].contents[
+                    0]
 
             info['address'] = response_house.find("h2", {"class": "map-address"}).contents[0]
             info['location'] = response_house.find("h3", {"class": "map-location"}).contents[0]
 
-            caracteristicas = response_house.find("ul", {"class": "specs-list"}).contents
-            # falta obtener las caracteristicas que varian segun la publicacion
-            # falta obtener la descripcion
-            # falta hacer que si algun dato no existe de los de arriba , no se rompa
+            def listToString(s):
+                string = ""
+                s = list(s)
+                for e in s:
+                    if isinstance(e, Tag):
+                        pass
+                    else:
+                        string += e
+                return string
+
+            info['description'] = listToString(
+                response_house.find("div", {"class": "item-description__text"}).contents[1].contents)
+
+            # Caracteristicas que varian segun la publicacion
+            listali = []
+            contador = 0
+
+            caracteristicas = list(response_house.find("ul", {"class": "specs-list"}).contents)
+            for caracteristica in caracteristicas:
+                if contador % 2 == 1:
+                    elemento = response_house.find("ul", {"class": "specs-list"}).contents[contador]
+                    listali.append(elemento)
+                contador += 1
+
+            listnamecaract = []
+            listvaluecaract = []
+            for caracteristica in listali:
+                contenido = list(caracteristica.contents)
+                contador2 = 0
+                flag_nombre = True
+                for i in contenido:
+                    if contador2 % 2 == 1:
+                        elemento2 = caracteristica.contents[contador2].contents[0]
+                        if flag_nombre == True:
+                            listnamecaract.append(elemento2)
+                            flag_nombre = False
+                        else:
+                            listvaluecaract.append(elemento2)
+                            flag_nombre = True
+                    contador2 += 1
+
+        return info
+
+
 
     def houses_id_info(self):
         print("Start Mercado Libre houses info Scrapping")
