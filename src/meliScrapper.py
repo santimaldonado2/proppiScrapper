@@ -111,17 +111,33 @@ class MeliScrapper:
                 info['bathrooms'] = 'null data'
 
             section_view_more = response_house.find("section", {"class": "vip-section-seller-info"})
-            info['name'] = section_view_more.contents[5].contents[1].contents[0]
-            info['phone1'] = section_view_more.find_all("span", {"class": "profile-info-phone-value"})[0].contents[0]
-            if list(section_view_more.find_all("span", {"class": "profile-info-phone-value"})).__len__() == 2:
-                info['phone2'] = section_view_more.find_all("span", {"class": "profile-info-phone-value"})[1].contents[
+            try:
+                info['name'] = section_view_more.contents[5].contents[1].contents[0]
+            except:
+                info['name'] = 'null data'
+
+            try:
+                info['phone1'] = section_view_more.find_all("span", {"class": "profile-info-phone-value"})[0].contents[
                     0]
-
-            info['address'] = response_house.find("h2", {"class": "map-address"}).contents[0]
-            info['location'] = response_house.find("h3", {"class": "map-location"}).contents[0]
-
-            info['description'] = self.listToString(
-                response_house.find("div", {"class": "item-description__text"}).contents[1].contents)
+                if list(section_view_more.find_all("span", {"class": "profile-info-phone-value"})).__len__() == 2:
+                    info['phone2'] = \
+                        section_view_more.find_all("span", {"class": "profile-info-phone-value"})[1].contents[
+                            0]
+            except:
+                info['phone1'], info['phone2'] = 'null data'
+            try:
+                info['address'] = response_house.find("h2", {"class": "map-address"}).contents[0]
+            except:
+                info['address'] = 'null data'
+            try:
+                info['location'] = response_house.find("h3", {"class": "map-location"}).contents[0]
+            except:
+                info['location'] = ' null data'
+            try:
+                info['description'] = self.listToString(
+                    response_house.find("div", {"class": "item-description__text"}).contents[1].contents)
+            except:
+                info['description'] = "null data"
 
             # Caracteristicas que varian segun la publicacion
             listali = []

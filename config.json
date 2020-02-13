@@ -28,12 +28,12 @@
   },
   "meli": {
     "from_page": 1,
-    "pages": 2,
+    "pages": 35,
     "result_filename": "meli",
     "ids_filename": "meli",
     "publisher_types": [
-      "dueno-directo",
-      "inmobiliaria"
+      "dueno-directo"
+
     ]
   }
 }
