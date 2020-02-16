@@ -8,6 +8,14 @@ from bs4 import Tag
 
 from progressBarPrinter import print_progress_bar
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler('logs/meliScrapper.log')
+fh.setLevel(logging.INFO)
+formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+
 
 class MeliScrapper:
     def __init__(self, config, request_getter, path):
@@ -34,13 +42,14 @@ class MeliScrapper:
         return BeautifulSoup(response.content, 'html.parser') if response is not None else response
 
     def scrap_ids(self):
+        logger.info("Start scrap_ids")
         print("Start Mercado libre scrapping")
         for publisher_type in self.publisher_types:
             print("Start {} id scrapping".format(publisher_type))
             houses_urls_df = pd.DataFrame()
-            print_progress_bar(0, self.from_page + self.pages - 1, publisher_type + " ids")
+            print_progress_bar(0, self.from_page + self.pages, publisher_type + " ids")
 
-            for i in range(self.from_page, self.from_page + self.pages - 1):
+            for i in range(self.from_page, self.from_page + self.pages):
 
                 if i == 1:
                     page_part_number = 1
@@ -76,108 +85,69 @@ class MeliScrapper:
                 print("")
                 print("End {} id scrapping".format(publisher_type))
             print("End Mercado Libre ID Scrapping")
+            logger.info("End scrap_ids")
 
-    def listToString(self, s):
-        string = ""
-        ss = list(s)
-        for e in ss:
-            if isinstance(e, Tag):
-                pass
+    def get_data(self, base, content_lists):
+        index = content_lists.pop(0)
+        try:
+            if content_lists:
+                data = self.get_data(base[index].contents, content_lists)
             else:
-                string += e
-        return string
+                data = base[index]
+        except:
+            return None
+
+        return data
+
+    def get_lat_long(self, response_house):
+        lat_long = ' %2C '
+        google_map_url = 'https://maps.googleapis.com/maps/api/staticmap?center='
+        for script in response_house.find_all('script'):
+            if google_map_url in script.get_text():
+                lat_long = \
+                    script.get_text().split(google_map_url)[1].split('&zoom')[0]
+
+        return tuple(lat_long.split('%2C'))
 
     def get_house_info(self, link):
+        logger.info("Start get_house_info")
         response_house = self.get(link)
         info = {}
         if response_house:
             short_description = response_house.find("section", {"class": "short-description--static"})
-            info['shortDescription'] = short_description.find("h1").contents[0]
-            info['currency'] = short_description.find("span").contents[1].contents[0]
-            info['price'] = short_description.find("span").contents[3].contents[0]
-            try:
-                info['size'] = short_description.find_all("dl")[1].contents[2].contents[0]
-            except:
-                info['size'] = 'null data'
 
-            try:
-                info['rooms'] = short_description.find_all("dl")[2].contents[2].contents[0]
-            except:
-                info['rooms'] = 'null data'
-
-            try:
-                info['bathrooms'] = short_description.find_all("dl")[3].contents[2].contents[0]
-            except:
-                info['bathrooms'] = 'null data'
+            info['shortDescription'] = self.get_data(short_description.find("h1").contents, [0]).strip()
+            info['currency'] = self.get_data(short_description.find("span").contents, [1, 0])
+            info['price'] = self.get_data(short_description.find("span").contents, [3, 0])
+            info['size'] = self.get_data(short_description.find_all("dl"), [1, 2, 0])
+            info['rooms'] = self.get_data(short_description.find_all("dl"), [2, 2, 0])
+            info['bathrooms'] = self.get_data(short_description.find_all("dl"), [3, 2, 0])
+            info['link'] = link
 
             section_view_more = response_house.find("section", {"class": "vip-section-seller-info"})
-            try:
-                info['name'] = section_view_more.contents[5].contents[1].contents[0]
-            except:
-                info['name'] = 'null data'
 
-            try:
-                info['phone1'] = section_view_more.find_all("span", {"class": "profile-info-phone-value"})[0].contents[
-                    0]
-                if list(section_view_more.find_all("span", {"class": "profile-info-phone-value"})).__len__() == 2:
-                    info['phone2'] = \
-                        section_view_more.find_all("span", {"class": "profile-info-phone-value"})[1].contents[
-                            0]
-            except:
-                info['phone1'], info['phone2'] = 'null data'
-            try:
-                info['address'] = response_house.find("h2", {"class": "map-address"}).contents[0]
-            except:
-                info['address'] = 'null data'
-            try:
-                info['location'] = response_house.find("h3", {"class": "map-location"}).contents[0]
-            except:
-                info['location'] = ' null data'
-            try:
-                info['description'] = self.listToString(
-                    response_house.find("div", {"class": "item-description__text"}).contents[1].contents)
-            except:
-                info['description'] = "null data"
+            info['name'] = self.get_data(section_view_more.contents, [5, 1, 0])
 
-            # Caracteristicas que varian segun la publicacion
-            listali = []
-            contador = 0
+            for i, phone in enumerate(section_view_more.find_all("span", {"class": "profile-info-phone-value"})):
+                info['phone_{}'.format(i)] = phone.get_text()
 
-            # en tipo vendedor inmueble a veces no exiten estos datos
-            try:
-                caracteristicas = list(response_house.find("ul", {"class": "specs-list"}).contents)
-                for caracteristica in caracteristicas:
-                    if contador % 2 == 1:
-                        elemento = response_house.find("ul", {"class": "specs-list"}).contents[contador]
-                        listali.append(elemento)
-                    contador += 1
+            info['address'] = self.get_data(response_house.find("h2", {"class": "map-address"}).contents, [0])
+            info['location'] = self.get_data(response_house.find("h3", {"class": "map-location"}).contents, [0])
 
-                listnamecaract = []
-                listvaluecaract = []
-                for caracteristica in listali:
-                    contenido = list(caracteristica.contents)
-                    contador2 = 0
-                    flag_nombre = True
-                    for i in contenido:
-                        if contador2 % 2 == 1:
-                            elemento2 = caracteristica.contents[contador2].contents[0]
-                            if flag_nombre == True:
-                                listnamecaract.append(elemento2)
-                                flag_nombre = False
-                            else:
-                                listvaluecaract.append(elemento2)
-                                flag_nombre = True
-                        contador2 += 1
+            info['description'] = response_house.find("div", {"class": "item-description__text"}).find(
+                "p").get_text().replace('<br>', '')
 
-                info_extra = {listnamecaract.lower().replace(' ', '_'): listvaluecaract for
-                              listnamecaract, listvaluecaract in zip(listnamecaract, listvaluecaract)}
-                info.update(info_extra)
-            except:
-                pass
+            info['latitude'], info['longitude'] = self.get_lat_long(response_house)
 
-            return info
+            for spec_item in response_house.find("ul", {"class": "specs-list"}).children:
+                if isinstance(spec_item, Tag):
+                    info[spec_item.find('strong').get_text().replace(' ', '_')] = spec_item.find('span').get_text()
+
+        logger.info("End get_house_info")
+        return info
 
     def houses_id_info(self):
+        logger.info("Start houses_id_info")
         print("Start Mercado Libre houses info Scrapping")
         for publisher_type in self.publisher_types:
             print("Start {} houses info Scrapping".format(publisher_type))
@@ -212,4 +182,6 @@ class MeliScrapper:
                                   index=False)
             print("")
             print("End {} houses info Scrapping".format(publisher_type))
+
+        logger.info("End houses_id_info")
         print("End Mercado Libre houses info Scrapping")
