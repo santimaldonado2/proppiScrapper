@@ -1,26 +1,40 @@
 {
-	"scrap_lavoz":"True",
+  "scrap_lavoz": "False",
   "scrap_olx": "False",
-	"requests" : {
-		"use_proxy":"False",
-		"max_attempts" : 5,
-		"sleep_time": 0.5
-	},
-	"lavoz":{
-		"from_page":1,
-		"pages": 210,
-		"result_filename": "lavoz",
-		"ids_filename":"lavoz",
-		"publisher_types": [
-			"particular"
-		]
-	},
-	"olx":{
-		"from_page":1,
-		"pages": 2,
-		"result_filename": "olx",		
-		"ids_filename":"olx",
-		"provinces": ["cordoba", "santafe"]
-	}
+  "scrap_meli": "True",
+  "requests": {
+    "use_proxy": "False",
+    "max_attempts": 5,
+    "sleep_time": 0.5
+  },
+  "lavoz": {
+    "from_page": 1,
+    "pages": 210,
+    "result_filename": "lavoz",
+    "ids_filename": "lavoz",
+    "publisher_types": [
+      "particular"
+    ]
+  },
+  "olx": {
+    "from_page": 1,
+    "pages": 2,
+    "result_filename": "olx",
+    "ids_filename": "olx",
+    "provinces": [
+      "cordoba",
+      "santafe"
+    ]
+  },
+  "meli": {
+    "from_page": 1,
+    "pages": 35,
+    "result_filename": "meli",
+    "ids_filename": "meli",
+    "publisher_types": [
+      "dueno-directo"
+
+    ]
+  }
 }
 

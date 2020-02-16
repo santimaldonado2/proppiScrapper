@@ -8,6 +8,8 @@ Created on Thu Mar  7 09:48:07 2019
 import os
 import json
 import logging
+
+from meliScrapper import MeliScrapper
 from requestgetter import RequestGetter
 from lavozScrapper import LaVozScrapper
 from olxScrapper import OlxScrapper
@@ -30,6 +32,7 @@ print("-----Start Proppi Scrapper----")
 
 scrap_lavoz = config['scrap_lavoz'].lower() == "true"
 scrap_olx = config['scrap_olx'].lower() == "true"
+scrap_meli = config['scrap_meli'].lower() == "true"
 request_getter = RequestGetter(config['requests'])
 
 if scrap_lavoz:
@@ -41,6 +44,11 @@ if scrap_olx:
     olx_scrapper = OlxScrapper(config["olx"], request_getter, path)
     olx_scrapper.scrap_ids()
     olx_scrapper.get_houses_info()
+
+if scrap_meli:
+    meli_scrapper = MeliScrapper(config["meli"], request_getter, path)
+    meli_scrapper.scrap_ids()
+    meli_scrapper.houses_id_info()
 
 phrases = ["The best way to predict the future is to create it.",
            "Live as if you were to die tomorrow.Learn as if you were to live forever.",
@@ -54,4 +62,3 @@ logger.info("-----End Proppi Scrapper----")
 print("-----End Proppi Scrapper Succsesfully----")
 print("I hope you have a really nice day, and remember:")
 print(phrases[randint(0, len(phrases) - 1)])
-
