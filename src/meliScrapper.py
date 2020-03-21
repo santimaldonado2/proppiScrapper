@@ -145,8 +145,11 @@ class MeliScrapper:
             info['address'] = self.get_data(response_house.find("h2", {"class": "map-address"}).contents, [0])
             info['location'] = self.get_data(response_house.find("h3", {"class": "map-location"}).contents, [0])
 
-            info['description'] = response_house.find("div", {"class": "item-description__text"}).find(
-                "p").get_text().replace('<br>', '')
+            try:
+                info['description'] = response_house.find("div", {"class": "item-description__text"}).find(
+                    "p").get_text().replace('<br>', '')
+            except:
+                info['description'] = ""
 
             info['latitude'], info['longitude'] = self.get_lat_long(response_house)
 

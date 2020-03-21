@@ -62,12 +62,15 @@ class ZonapropScrapper:
             houses_df = pd.DataFrame()
             print_progress_bar(0, (self.from_page + self.pages - 1) * 20, publisher_type + " houses")
             for i in range(self.from_page, self.from_page + self.pages):
-                page_part = "pagina-" + str(i) + "-" if i > 1 else ""
-                search_url_inmu = 'https://www.zonaprop.com.ar/inmuebles-{page_part}{publisher_type}.html'.format(
+                page_part = "-pagina-" + str(i) if i > 1 else ""
+                search_url_inmu = 'https://www.zonaprop.com.ar/inmuebles-{publisher_type}{page_part}.html'.format(
                     publisher_type=publisher_type, page_part=page_part).replace("\'", '"')
                 response_soup = self.get(search_url_inmu)
-                house_list = response_soup.find_all("script")[24].text
-                house_list = house_list.split('listPostings = ')[1].split('const developmentData ')[0].strip()[:-1]
+                for script in response_soup.find_all("script"):
+                    if 'listPostings = ' in script.text:
+                        house_list = script.text.split('listPostings = ')[1].split('const developmentData ')[0].strip()[:-1]
+                        break
+
                 houses_list_json = json.loads(house_list)
                 processed_list = []
                 for house_json, j in zip(houses_list_json, range(0, len(houses_list_json))):
@@ -82,7 +85,6 @@ class ZonapropScrapper:
                     else:
                         print_progress_bar((i - 1) * 20 + j + 1, (self.from_page + self.pages - 1) * 20,
                                            publisher_type + " houses")
-
                 houses_temp_df = pd.DataFrame.from_records(processed_list)
                 houses_df = pd.concat([houses_df, houses_temp_df], axis=0, sort=False).reset_index().drop(
                     columns="index")

@@ -86,7 +86,7 @@ class LaVozScrapper:
             print("Start {} id scrapping".format(publisher_type))
             houses_urls_df = pd.DataFrame()
             print_progress_bar(0, self.from_page + self.pages - 1, publisher_type + " ids")
-            for i in range(self.from_page, self.from_page + self.pages - 1):
+            for i in range(0, self.from_page + self.pages - 1):
                 page_part = "&page=" + str(i)
 
                 if i == 0:
