@@ -10,10 +10,8 @@ def get_formated_telephone(telephone):
     if telephone.startswith('0'):
         telephone = telephone[1:]
 
-    if telephone.startswith("35115"):
-        telephone = "351" + telephone[5:]
-    elif telephone.startswith("15"):
-        telephone = "351" + telephone[2:]
+    if telephone.startswith("549"):
+        telephone = telephone[3:]
 
     telephones = telephone.split("/")
 
