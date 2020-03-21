@@ -71,8 +71,7 @@ python3 src/scrapper.py
 If you want to configure better the scrapper you should take a look in the config.json file.
 
 ### Main Configuration
-- `"scrap_lavoz"` it's a flag that enables/disables the scrapping in the LaVoz site. Possible values are: `"True"` and `"False"`.
-- `"scrap_olx"` it's a flag that enables/disables the scrapping in the OLX site. Possible values are: `"True"` and `"False"`.
+- `"scrap_[site]"` it's a flag that enables/disables the scrapping in each site. Possible values are: `"True"` and `"False"`.
 
 ### Requests Configuration
 - `"use_proxy"` it's a flag that enables/disables the scrapping using Internet free proxy servers. Possible values are: `"True"` and `"False"` if you want to go directly from your local to the objective site.
@@ -84,9 +83,8 @@ If you want to configure better the scrapper you should take a look in the confi
 - `"pages"` This value represent how many pages since the `"from_page"` it will scrap.
 - `"result_filename"` This is the prefix that indicates which prefix the result file will have. If you will execute the scrapper more than once a day, I strongly recommend change this parameter each time if you want to keep the results of each execution separately, otherwise the results would be overwritten. 
 - `"ids_filename"` This parameter is the prefix of an internal file that the scrapper use. It has the same behavior as the latter parameter.
-
-#### LaVoz Configuration
-- `"publisher_types"` This site categorize it's announcements by publisher types. You could search only some of them. Possible values are: `["Particular", "Comercio", "Inmobiliaria", "Concesionaria"]`. IMPORTANT: This value is a List!, so if you want to scrap only one of them, you must put it between []. For example, if I wanted to search only "Particular" the parameter value would be: `["Particular"]`
-
-#### OLX Configuration
-- `"provinces"` This site categorize it's announcements by provinces. You could search only some of them. There are lot of possible values, you should look for them in the OLX site. IMPORTANT: This value is a List!, so if you want to scrap only one province, you must put it between []. For example, if I wanted to search only "cordoba" the parameter value would be: `["cordoba"]`
+- `"publisher_types"` This site categorize it's announcements by publisher types. You could search only some of them. 
+    - Possible Values for each site:
+        - "lavoz" : ["inmobiliaria","matriculado-CPI","particular"]
+        - "meli" : ["inmobiliaria","dueno-directo"]
+        - "zonaprop": ["inmobiliaria","dueno-directo"]
