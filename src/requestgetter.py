@@ -80,7 +80,7 @@ class RequestGetter:
                 logger.info(
                     "End get_with_proxy proxy:[{}], response[{}],url:[{}]".format(self.current_proxy, response, url))
                 return response
-            except Exception as e:
+            except Exception:
                 attempts += 1
                 self.delete_current_proxy()
                 logger.info(
@@ -127,7 +127,7 @@ class RequestGetter:
                                          proxies={"http": self.current_proxy, "https": self.current_proxy},
                                          timeout=10)
                 logger.info(
-                    "End post_with_proxy proxy:[{proxy}], response[{response}], url:[{url}]," 
+                    "End post_with_proxy proxy:[{proxy}], response[{response}], url:[{url}],"
                     "data:[{data}], headers:[{headers}]".format(proxy=self.current_proxy,
                                                                 response=response,
                                                                 url=url,
@@ -136,7 +136,7 @@ class RequestGetter:
                 if not response.ok:
                     raise Exception("Not 200 Exception")
                 return response
-            except Exception as e:
+            except Exception:
                 attempts += 1
                 logger.info(
                     "Error post_with_proxy number:[{}], proxy:[{}],url:[{}]".format(attempts, self.current_proxy, url))
