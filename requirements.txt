@@ -10,9 +10,8 @@ isort==4.3.21
 lazy-object-proxy==1.4.3
 lxml==4.3.2
 mccabe==0.6.1
-numpy==1.16.2
-pandas==0.24.1
-pkg-resources==0.0.0
+numpy==1.18.3
+pandas==0.25.3
 post==2018.11.20
 public==2018.11.20
 pycodestyle==2.5.0

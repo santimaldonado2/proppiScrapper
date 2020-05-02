@@ -157,6 +157,8 @@ class GeneralScrapper(ABC):
                 for row in houses_urls_df.itertuples():
                     i += 1
                     house_info = self.get_house_info(row.url)
+                    if not 'operation_type' in house_info:
+                        house_info['operation_type'] = operation_type
                     if house_info == {}:
                         logger.info("This house could not be processed: {}".format(row.url))
                         continue
