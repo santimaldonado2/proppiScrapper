@@ -14,6 +14,7 @@ from constants import LAVOZ, MELI, ZONAPROP, SLEEP, CONTACT_INFO, REQUESTS, USE_
 from lavozScrapper import LaVozScrapper
 from meliScrapper import MeliScrapper
 from requestgetter import RequestGetter
+from utils import merge_result_files
 from zonapropScrapper import ZonapropScrapper
 
 path = os.path.dirname(os.path.realpath('__file__'))
@@ -48,6 +49,8 @@ for key in scrappers_flag.keys():
         scrapper = scrappers[key]()
         scrapper.scrap_ids()
         scrapper.get_houses_info()
+
+merge_result_files(path)
 
 phrases = ['The best way to predict the future is to create it.',
            'Live as if you were to die tomorrow.Learn as if you were to live forever.',
