@@ -152,7 +152,7 @@ class ZonapropScrapper(GeneralScrapper):
         house_info.update(self.process_expenses(house_json))
         house_info.update(self.process_main_features(house_json))
         house_info.update(self.process_general_features(house_json))
-        house_info.update(self.process_flag_features(house_json))
+        #house_info.update(self.process_flag_features(house_json))
         house_info.update(self.process_real_state_type_and_subtype(house_json))
         house_info.update(self.process_pub_date(house_json))
         house_info.update(self.process_location(house_json))
@@ -200,6 +200,7 @@ class ZonapropScrapper(GeneralScrapper):
         return processed_general_features
 
     def process_flag_features(self, house_json):
+        '''Deprecated.'''
         return {PUBLISHER_TYPE_COLUMN: house_json[FLAGS_FEATURES][0][FEATURE_ID]}
 
     def process_real_state_type_and_subtype(self, house_json):

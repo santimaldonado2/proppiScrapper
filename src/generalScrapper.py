@@ -92,36 +92,41 @@ class GeneralScrapper(ABC):
                 end_page = self.from_page + self.pages
                 print_progress_bar(self.from_page, end_page, start_value=self.from_page)
                 for i in range(self.from_page, end_page):
-                    search_url_inmu = self.get_search_url(publisher_type, operation_type, i)
-                    response_soup = self.get(search_url_inmu)
-                    if not response_soup:
-                        logger.info(ERROR_MESSAGE.format(i + 1,
-                                                         publisher_type,
-                                                         search_url_inmu))
+                    try:
+                        search_url_inmu = self.get_search_url(publisher_type, operation_type, i)
+                        response_soup = self.get(search_url_inmu)
+                        if not response_soup:
+                            logger.info(ERROR_MESSAGE.format(i + 1,
+                                                             publisher_type,
+                                                             search_url_inmu))
+                            continue
+                        house_list = self.get_house_list(response_soup)
+                        if not house_list:
+                            logger.info(
+                                NOT_HOUSE_INFO_ERROR_MESSAGE.format(i + 1,
+                                                                    publisher_type,
+                                                                    search_url_inmu))
+                            continue
+
+                        house_processed = [False for house in house_list]
+                        houses_info = pd.DataFrame({
+                            "url": house_list,
+                            "processed": house_processed
+                        })
+                        houses_urls_df = pd.concat([houses_urls_df, houses_info], axis=0, sort=False).reset_index().drop(
+                            columns="index")
+
+                        self.save_csv(df=houses_urls_df,
+                                      operation_type=operation_type,
+                                      publisher_type=publisher_type,
+                                      type=IDS,
+                                      sub_directory=TEMP)
+
+                        print_progress_bar(i + 1, end_page, start_value=self.from_page)
+                    except:
+                        logger.error("Error scrapping stage=[{stage}], page=[{}]".format(stage=stage,
+                                                                                         page=i))
                         continue
-                    house_list = self.get_house_list(response_soup)
-                    if not house_list:
-                        logger.info(
-                            NOT_HOUSE_INFO_ERROR_MESSAGE.format(i + 1,
-                                                                publisher_type,
-                                                                search_url_inmu))
-                        continue
-
-                    house_processed = [False for house in house_list]
-                    houses_info = pd.DataFrame({
-                        "url": house_list,
-                        "processed": house_processed
-                    })
-                    houses_urls_df = pd.concat([houses_urls_df, houses_info], axis=0, sort=False).reset_index().drop(
-                        columns="index")
-
-                    self.save_csv(df=houses_urls_df,
-                                  operation_type=operation_type,
-                                  publisher_type=publisher_type,
-                                  type=IDS,
-                                  sub_directory=TEMP)
-
-                    print_progress_bar(i + 1, end_page, start_value=self.from_page)
 
                 if not os.path.exists(os.path.join(self.path, IDS_DIRECTORY)):
                     os.makedirs(os.path.join(self.path, IDS_DIRECTORY))
@@ -156,28 +161,32 @@ class GeneralScrapper(ABC):
                 print_progress_bar(i, total_rows)
                 for row in houses_urls_df.itertuples():
                     i += 1
-                    house_info = self.get_house_info(row.url)
-                    if not 'operation_type' in house_info:
-                        house_info['operation_type'] = operation_type
-                    if house_info == {}:
-                        logger.info("This house could not be processed: {}".format(row.url))
-                        continue
-                    house_info_df = pd.DataFrame([house_info], columns=house_info.keys())
-                    houses_urls_df.loc[row.Index, 'processed'] = True
-                    houses_df = pd.concat([houses_df, house_info_df], axis=0, sort=False).reset_index().drop(
-                        columns="index")
-                    if i % 5 == 0:
-                        self.save_csv(df=houses_df,
-                                      operation_type=operation_type,
-                                      publisher_type=publisher_type,
-                                      type=INFO,
-                                      sub_directory=TEMP)
+                    try:
+                        house_info = self.get_house_info(row.url)
+                        if not 'operation_type' in house_info:
+                            house_info['operation_type'] = operation_type
+                        if house_info == {}:
+                            logger.info("This house could not be processed: {}".format(row.url))
+                            continue
+                        house_info_df = pd.DataFrame([house_info], columns=house_info.keys())
+                        houses_urls_df.loc[row.Index, 'processed'] = True
+                        houses_df = pd.concat([houses_df, house_info_df], axis=0, sort=False).reset_index().drop(
+                            columns="index")
+                        if i % 5 == 0:
+                            self.save_csv(df=houses_df,
+                                          operation_type=operation_type,
+                                          publisher_type=publisher_type,
+                                          type=INFO,
+                                          sub_directory=TEMP)
 
-                        self.save_csv(df=houses_urls_df,
-                                      operation_type=operation_type,
-                                      publisher_type=publisher_type,
-                                      type=IDS,
-                                      sub_directory=TEMP)
+                            self.save_csv(df=houses_urls_df,
+                                          operation_type=operation_type,
+                                          publisher_type=publisher_type,
+                                          type=IDS,
+                                          sub_directory=TEMP)
+                    except:
+                        logger.error("Error processing url=[{url}]".format(url=row.url))
+                        continue
 
                     print_progress_bar(i, total_rows)
 

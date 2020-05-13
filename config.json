@@ -11,9 +11,9 @@
     },
     "lavoz": {
       "from_page": 1,
-      "pages": 1,
+      "pages": 50,
       "publisher_types": [
-        "particular"
+        "inmobiliaria"
       ],
       "operation_types": [
         "venta"
@@ -21,24 +21,24 @@
     },
     "meli": {
       "from_page": 1,
-      "pages": 1,
+      "pages": 50,
       "publisher_types": [
-        "dueno-directo"
+        "inmobiliaria"
 
       ],
       "operation_types": [
-        "alquiler"
+        "venta"
 
       ]
     },
     "zonaprop": {
       "from_page": 1,
-      "pages": 1,
+      "pages": 10,
       "publisher_types": [
-        "dueno-directo"
+        "inmobiliaria"
       ],
       "operation_types": [
-        "alquiler"
+        "venta"
 
       ],
       "contact_info": "False"
