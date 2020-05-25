@@ -38,7 +38,7 @@ FALSE_STRING = 'false'
 COLUMNS_TO_KEEP = {
     'zonaprop': ['publication_date', 'city', 'house_type', 'operation_type', 'price_currency', 'price', 'dormitorios', 'title', 'url'],
     'lavoz': ['recs:publishtime', 'gcl-barrio', 'gcl-tipo-aviso', 'gcl-operacion', 'price:currency', 'price:amount', 'gcl-dormitorios', 'title', 'url', 'telephone','telephone_formated'],
-    'meli': ['publication_date', 'location', 'type', 'operation_type', 'currency', 'price', 'Dormitorios', 'shortDescription', 'link', 'phone_1', 'phone_1_formated']
+    'meli': ['publication_date', 'location', 'type', 'operation_type', 'currency', 'price', 'rooms', 'shortDescription', 'link', 'phone_1', 'phone_1_formated']
 }
 
 COLUMNS_NAMES = ['Fecha Publicación', 'Barrio', 'Tipo de Propiedad', 'Tipo de Operación', 'Moneda', 'Precio', 'Dormitorios', 'Título', 'URL', 'Teléfono', 'Teléfono2']

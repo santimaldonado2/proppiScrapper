@@ -22,9 +22,9 @@ ERROR_MESSAGE = "Error trying to get this page: number[{}] publisher_type[{}] ur
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-fh = logging.FileHandler('logs/lavozScrapper.log')
+fh = logging.FileHandler('logs/generalScrapper.log')
 fh.setLevel(logging.INFO)
-formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
+formatter = logging.Formatter('|%(asctime)s\t|%(levelname)s\t|%(message)s')
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
@@ -94,6 +94,7 @@ class GeneralScrapper(ABC):
                 for i in range(self.from_page, end_page):
                     try:
                         search_url_inmu = self.get_search_url(publisher_type, operation_type, i)
+                        logger.info(f'Start {stage}|\t\turl=[{search_url_inmu}]|\t\tpage[{i}]')
                         response_soup = self.get(search_url_inmu)
                         if not response_soup:
                             logger.info(ERROR_MESSAGE.format(i + 1,
@@ -123,9 +124,9 @@ class GeneralScrapper(ABC):
                                       sub_directory=TEMP)
 
                         print_progress_bar(i + 1, end_page, start_value=self.from_page)
+                        logger.info(f'End {stage}|\t\turl=[{search_url_inmu}]|\t\tpage[{i}]')
                     except:
-                        logger.error("Error scrapping stage=[{stage}], page=[{}]".format(stage=stage,
-                                                                                         page=i))
+                        logger.error(f"Processing {stage}|\t\turl=[{search_url_inmu}]|\t\tpage[{i}]")
                         continue
 
                 if not os.path.exists(os.path.join(self.path, IDS_DIRECTORY)):
@@ -137,14 +138,11 @@ class GeneralScrapper(ABC):
                               type=IDS,
                               sub_directory=IDS_DIRECTORY)
 
-                logger.info("End scrap_ids {}".format(publisher_type))
                 self.show_message()
                 self.show_message("End Ids Scrapping", stage)
-            logger.info("End scrap_ids")
         self.show_message("End Ids Scrapping", [self.name.upper()])
 
     def get_houses_info(self):
-        logger.info("Start get_houses_info")
         self.show_message("Start Info Scrapping", [self.name.upper()])
         for publisher_type in self.publisher_types:
             for operation_type in self.operation_types:
@@ -222,3 +220,4 @@ class GeneralScrapper(ABC):
     def show_message(self, message="", stage=None):
         stage_message = ' '.join(stage) if stage else ''
         print(message, stage_message)
+        logger.info(f'{stage_message}|\t\t{message}')

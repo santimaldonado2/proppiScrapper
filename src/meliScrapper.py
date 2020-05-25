@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 fh = logging.FileHandler('logs/meliScrapper.log')
 fh.setLevel(logging.INFO)
-formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
+formatter = logging.Formatter('|%(asctime)s\t|%(levelname)s\t|%(message)s')
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
@@ -107,7 +107,7 @@ class MeliScrapper(GeneralScrapper):
         return tuple(lat_long.split(LAT_LONG_SEPARATOR))
 
     def get_house_info(self, link):
-        logger.info('Start get_house_info')
+        logger.info(f'Start get_house_info|\t\t{link}')
         response_house = self.get(link)
         info = {}
         if response_house:
@@ -148,5 +148,5 @@ class MeliScrapper(GeneralScrapper):
                         info[spec_item.find(STRONG).get_text().replace(BLANK_SPACE, UNDER_SCORE)] = spec_item.find(
                             SPAN).get_text()
 
-        logger.info('End get_house_info')
+        logger.info(f'End get_house_info|\t\t{link}')
         return info
