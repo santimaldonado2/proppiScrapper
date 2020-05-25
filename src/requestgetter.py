@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 fh = logging.FileHandler('logs/requestgetter.log')
 fh.setLevel(logging.INFO)
-formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
+formatter = logging.Formatter('|%(asctime)s\t|%(levelname)s\t|%(message)s')
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
@@ -58,34 +58,35 @@ class RequestGetter:
         logger.info("End delete_current_proxy")
 
     def get_without_proxy(self, url):
-        logger.info("Start get_without_proxy")
+        logger.info(f"Start get_without_proxy\t|url={url}")
         response = None
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=15)
             sleep(self.sleep_time)
-            logger.info("End get_without_proxy OK:[{}]".format(response))
+            logger.info(f"End get_without_proxy\t|url={url}\t|Response={response}")
+        except requests.exceptions.Timeout:
+            logger.error(f"Timeout get_without_proxy\t|url={url}")
+            sleep(10)
         except Exception as e:
-            logger.error("This url has not been processed: {} | Exception: {}".format(url, e))
+            logger.error(f"Error getting url\t|url={url}\t|Exception={e}")
 
         return response
 
     def get_with_proxy(self, url):
-        logger.info("Start get_with_proxy url:[{}]".format(url))
+        logger.info(f"Start get_with_proxy\t|url={url}")
         attempts = 0
         while attempts < self.max_attempts:
             try:
                 self.update_current_proxy()
                 response = requests.get(url, proxies={"http": self.current_proxy, "https": self.current_proxy},
                                         timeout=10)
-                logger.info(
-                    "End get_with_proxy proxy:[{}], response[{}],url:[{}]".format(self.current_proxy, response, url))
+                logger.info(f"End get_without_proxy\t|url={url}\t|Response={response}\t|proxy={self.current_proxy}")
                 return response
             except Exception:
                 attempts += 1
                 self.delete_current_proxy()
-                logger.info(
-                    "Error get_with_proxy number:[{}], proxy:[{}],url:[{}]".format(attempts, self.current_proxy, url))
-        logger.info("get_with_proxy max attempts reached, trying without proxy")
+                logger.info(f"End get_without_proxy\t|url={url}\t|attempts={attempts}\t|proxy={self.current_proxy}")
+        logger.info(f"get_with_proxy reached max attempts, trying without proxy\t|url={url}\t")
         return self.get_without_proxy(url)
 
     def get(self, url, skip_proxy=False):
@@ -96,7 +97,7 @@ class RequestGetter:
                                                                                                        headers)
 
     def post_without_proxy(self, url, data, headers=None):
-        logger.info("Start post_without_proxy")
+        logger.info(f"Start post_without_proxy\t|url={url}")
         response = None
         try:
             response = requests.post(url,
@@ -104,19 +105,14 @@ class RequestGetter:
                                      headers=headers,
                                      timeout=10)
             sleep(self.sleep_time)
-            logger.info(
-                "End post_without_proxy, response[{response}], url:[{url}],"
-                "data:[{data}], headers:[{headers}]".format(response=response,
-                                                            url=url,
-                                                            data=data,
-                                                            headers=headers))
+            logger.info(f"End post_without_proxy\t|url={url}\t|Response={response}\t|data={data}\t|headers={headers}")
         except Exception as e:
-            logger.error("This url has not been processed: {} | Exception: {}".format(url, e))
+            logger.error(f"Error posting url\t|url={url}\t|Exception={e}\t|data={data}\t|headers={headers}")
 
         return response
 
     def post_with_proxy(self, url, data, headers=None):
-        logger.info("Start post_with_proxy url:[{}]".format(url))
+        logger.info(f"Start post_with_proxy\t|url={url}")
         attempts = 0
         while attempts < self.max_attempts:
             try:
@@ -126,20 +122,15 @@ class RequestGetter:
                                          headers=headers,
                                          proxies={"http": self.current_proxy, "https": self.current_proxy},
                                          timeout=10)
-                logger.info(
-                    "End post_with_proxy proxy:[{proxy}], response[{response}], url:[{url}],"
-                    "data:[{data}], headers:[{headers}]".format(proxy=self.current_proxy,
-                                                                response=response,
-                                                                url=url,
-                                                                data=data,
-                                                                headers=headers))
+                logger.info(f"End post_without_proxy\t|url={url}\t|Response={response}\t|data={data}\t|"
+                            f"headers={headers}\t|proxy={self.current_proxy}")
                 if not response.ok:
                     raise Exception("Not 200 Exception")
                 return response
             except Exception:
                 attempts += 1
-                logger.info(
-                    "Error post_with_proxy number:[{}], proxy:[{}],url:[{}]".format(attempts, self.current_proxy, url))
+                logger.error(f"Error posting url\t|url={url}\t|Exception={e}\t|data={data}\t|"
+                             f"headers={headers}\t|proxy={self.current_proxy}")
                 self.delete_current_proxy()
-        logger.info("post_with_proxy max attempts reached, trying without proxy")
+        logger.info(f"post_with_proxy reached max attempts, trying without proxy\t|url={url}\t")
         return self.post_without_proxy(url, data, headers)

@@ -134,10 +134,13 @@ class ZonapropScrapper(GeneralScrapper):
 
     def get_house_info(self, house_text):
         house_json = literal_eval(house_text)
+        logger.info(f'Start get_house_info {house_json[URL]}')
         house_info = self.process_house_info(house_json)
         if self.contact_info:
             house_info.update(self.get_contact_info(house_json))
             self.sleep_random_time()
+
+        logger.info(f'Start get_house_info {house_json[URL]}')
         return house_info
 
     def sleep_random_time(self):

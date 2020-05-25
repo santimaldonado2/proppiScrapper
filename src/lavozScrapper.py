@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 fh = logging.FileHandler('logs/lavozScrapper.log')
 fh.setLevel(logging.INFO)
-formatter = logging.Formatter('[%(asctime)s][%(levelname)s] %(message)s')
+formatter = logging.Formatter('|%(asctime)s\t|%(levelname)s\t|%(message)s')
 fh.setFormatter(formatter)
 logger.addHandler(fh)
 
@@ -57,7 +57,7 @@ class LaVozScrapper(GeneralScrapper):
         return list(set(house_item.get(HREF_ATTRIBUTE) for house_item in house_list))
 
     def get_house_info(self, link):
-        logger.info("Start get_house_info")
+        logger.info(f'Start get_house_info|\t\t{link}')
         response_house = self.get(link)
         info = {}
         if response_house:
@@ -78,5 +78,5 @@ class LaVozScrapper(GeneralScrapper):
             info[TELEPHONE_COLUMN] = tag_telephone.get_text() if tag_telephone else EMPTY_STRING
             info[TELEPHONE_FORMATED_COLUMN] = get_formated_telephone(info[TELEPHONE_COLUMN])
 
-        logger.info("End get_house_info")
+        logger.info(f"End get_house_info|\t\t{link}")
         return info
