@@ -8,7 +8,7 @@ get==2018.11.19
 idna==2.8
 isort==4.3.21
 lazy-object-proxy==1.4.3
-lxml==4.3.2
+lxml==4.6.5
 mccabe==0.6.1
 numpy==1.18.3
 pandas==0.25.3
